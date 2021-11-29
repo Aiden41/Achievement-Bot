@@ -3,6 +3,9 @@ import discord
 from discord.ext import commands
 import json
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 token = os.environ['TOKEN']
 auth = os.environ['AUTH']
