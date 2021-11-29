@@ -26,29 +26,29 @@ async def help(ctx):
 
 @bot.command(pass_context=True)
 async def count(ctx): 
-    mcc = ctx.guild.get_role(913709746098429964)
-    infinite = ctx.guild.get_role(914441618591989801)
-    pc = ctx.guild.get_role(914444776726753300)
-    xbox = ctx.guild.get_role(914444742949994518)
-    legacy = ctx.guild.get_role(914444710939074560)
-    hc = ctx.guild.get_role(914444802131652648)
+    mcc = ctx.guild.get_role(764645825392803870)
+    infinite = ctx.guild.get_role(914979273608138783)
+    pc = ctx.guild.get_role(818247288610357268)
+    xbox = ctx.guild.get_role(818247307069882409)
+    legacy = ctx.guild.get_role(818246915304194058)
+    hc = ctx.guild.get_role(818278553187385424)
     await ctx.send("Number of users with each role:\nMCC 100%:   **" + str(len(mcc.members)) + "**\nInfinite 100%:   **" + str(len(infinite.members)) + "**\nPC Master:   **" + str(len(pc.members)) + "**\nModern Xbox Master:   **" + str(len(xbox.members)) + "**\nLegacy Master:   **" + str(len(legacy.members)) + "**\nHalo Completionist:   **" + str(len(hc.members)) + "**")
 
 @bot.command(pass_context=True) #mcc command
 async def mcc(ctx):
-  role = discord.utils.get(ctx.guild.roles, id=914444802131652648)
+  role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Halo Completionist.')
      return
-  role = discord.utils.get(ctx.guild.roles, id=914444742949994518)
+  role = discord.utils.get(ctx.guild.roles, id=818247307069882409)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Modern Xbox Master.')
      return
-  role = discord.utils.get(ctx.guild.roles, id=914444776726753300)
+  role = discord.utils.get(ctx.guild.roles, id=818247288610357268)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished PC Master.')
      return
-  role = discord.utils.get(ctx.guild.roles, id=913709746098429964) #get mcc role
+  role = discord.utils.get(ctx.guild.roles, id=764645825392803870) #get mcc role
   if role in ctx.message.author.roles: #if user has role already, do nothing
      await ctx.reply('You\'ve already finished MCC.')
      return
@@ -91,19 +91,19 @@ async def mcc(ctx):
 
 @bot.command(pass_context=True) #same as mcc but for halo infinite
 async def infinite(ctx):
-  role = discord.utils.get(ctx.guild.roles, id=914444802131652648)
+  role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Halo Completionist.')
      return
-  role = discord.utils.get(ctx.guild.roles, id=914444742949994518)
+  role = discord.utils.get(ctx.guild.roles, id=818247307069882409)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Modern Xbox Master.')
      return
-  role = discord.utils.get(ctx.guild.roles, id=914444776726753300)
+  role = discord.utils.get(ctx.guild.roles, id=818247288610357268)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished PC Master.')
      return
-  role = discord.utils.get(ctx.guild.roles, id=914441618591989801)
+  role = discord.utils.get(ctx.guild.roles, id=914979273608138783)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Halo Infinite.')
      return
@@ -185,7 +185,7 @@ async def gt(ctx, *args):
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
 async def legacy(ctx):
-  role = discord.utils.get(ctx.guild.roles, id=914444710939074560)
+  role = discord.utils.get(ctx.guild.roles, id=818246915304194058)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Legacy Master.')
      return
@@ -261,11 +261,11 @@ async def legacy(ctx):
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
 async def xbox(ctx):
-  role = discord.utils.get(ctx.guild.roles, id=914444802131652648)
+  role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Halo Completionist.')
      return
-  role = discord.utils.get(ctx.guild.roles, id=914444742949994518)
+  role = discord.utils.get(ctx.guild.roles, id=818247307069882409)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Modern Xbox Master.')
      return
@@ -334,17 +334,17 @@ async def xbox(ctx):
                if game['achievement']['progressPercentage'] >= infinite:
                      infinite = game['achievement']['progressPercentage']
   if mcc == 100:
-    mccrole = discord.utils.get(ctx.guild.roles, id=913709746098429964)
+    mccrole = discord.utils.get(ctx.guild.roles, id=764645825392803870)
     await ctx.message.author.add_roles(mccrole)
   if infinite == 100:
-    infiniterole = discord.utils.get(ctx.guild.roles, id=914441618591989801)
+    infiniterole = discord.utils.get(ctx.guild.roles, id=914979273608138783)
     await ctx.message.author.add_roles(infiniterole)
   if sa == 100 and h5 == 100 and hw == 100 and hw2 == 100 and mcc == 100 and infinite == 100: #if all 100, give role
     await ctx.message.add_reaction('3️⃣')
     await ctx.message.add_reaction('✅')
-    mccrole = discord.utils.get(ctx.guild.roles, id=913709746098429964)
+    mccrole = discord.utils.get(ctx.guild.roles, id=764645825392803870)
     await ctx.message.author.remove_roles(mccrole)
-    infiniterole = discord.utils.get(ctx.guild.roles, id=914441618591989801)
+    infiniterole = discord.utils.get(ctx.guild.roles, id=914979273608138783)
     await ctx.message.author.remove_roles(infiniterole)
     await ctx.reply("Hey everyone! " + str(ctx.message.author.display_name) + " finished Modern Xbox Master! Congrats!")
     await ctx.message.author.add_roles(role)
@@ -357,11 +357,11 @@ async def xbox(ctx):
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
 async def pc(ctx):
-  role = discord.utils.get(ctx.guild.roles, id=914444802131652648)
+  role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Halo Completionist.')
      return
-  role = discord.utils.get(ctx.guild.roles, id=914444776726753300)
+  role = discord.utils.get(ctx.guild.roles, id=818247288610357268)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished PC Master.')
      return
@@ -430,17 +430,17 @@ async def pc(ctx):
                if game['achievement']['progressPercentage'] >= infinite:
                      infinite = game['achievement']['progressPercentage']
   if mcc == 100:
-    mccrole = discord.utils.get(ctx.guild.roles, id=913709746098429964)
+    mccrole = discord.utils.get(ctx.guild.roles, id=764645825392803870)
     await ctx.message.author.add_roles(mccrole)
   if infinite == 100:
-    infiniterole = discord.utils.get(ctx.guild.roles, id=914441618591989801)
+    infiniterole = discord.utils.get(ctx.guild.roles, id=914979273608138783)
     await ctx.message.author.add_roles(infiniterole)
   if sa == 100 and ss == 100 and hw == 100 and hw2 == 100 and mcc == 100 and infinite == 100: #if all 100, give role
     await ctx.message.add_reaction('3️⃣')
     await ctx.message.add_reaction('✅')
-    mccrole = discord.utils.get(ctx.guild.roles, id=913709746098429964)
+    mccrole = discord.utils.get(ctx.guild.roles, id=764645825392803870)
     await ctx.message.author.remove_roles(mccrole)
-    infiniterole = discord.utils.get(ctx.guild.roles, id=914441618591989801)
+    infiniterole = discord.utils.get(ctx.guild.roles, id=914979273608138783)
     await ctx.message.author.remove_roles(infiniterole)
     await ctx.reply("Hey everyone! " + str(ctx.message.author.display_name) + " finished PC Master! Congrats!")
     await ctx.message.author.add_roles(role)
@@ -453,7 +453,7 @@ async def pc(ctx):
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
 async def hc(ctx):
-  role = discord.utils.get(ctx.guild.roles, id=914444802131652648)
+  role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Halo Completionist.')
      return
@@ -529,21 +529,21 @@ async def hc(ctx):
                if game['achievement']['progressPercentage'] >= h5:
                      h5 = game['achievement']['progressPercentage']
   if mcc == 100:
-    mccrole = discord.utils.get(ctx.guild.roles, id=913709746098429964)
+    mccrole = discord.utils.get(ctx.guild.roles, id=764645825392803870)
     await ctx.message.author.add_roles(mccrole)
   if infinite == 100:
-    infiniterole = discord.utils.get(ctx.guild.roles, id=914441618591989801)
+    infiniterole = discord.utils.get(ctx.guild.roles, id=914979273608138783)
     await ctx.message.author.add_roles(infiniterole)
   if sa == 100 and ss == 100 and hw == 100 and hw2 == 100 and mcc == 100 and h5 == 100 and infinite == 100: #if all 100, give role
     await ctx.message.add_reaction('3️⃣')
     await ctx.message.add_reaction('✅')
-    mccrole = discord.utils.get(ctx.guild.roles, id=913709746098429964)
+    mccrole = discord.utils.get(ctx.guild.roles, id=764645825392803870)
     await ctx.message.author.remove_roles(mccrole)
-    infiniterole = discord.utils.get(ctx.guild.roles, id=914441618591989801)
+    infiniterole = discord.utils.get(ctx.guild.roles, id=914979273608138783)
     await ctx.message.author.remove_roles(infiniterole)
-    xboxrole = discord.utils.get(ctx.guild.roles, id=914444742949994518)
+    xboxrole = discord.utils.get(ctx.guild.roles, id=818247307069882409)
     await ctx.message.author.remove_roles(xboxrole)
-    pcrole = discord.utils.get(ctx.guild.roles, id=914444776726753300)
+    pcrole = discord.utils.get(ctx.guild.roles, id=818247288610357268)
     await ctx.message.author.remove_roles(pcrole)
     await ctx.reply("Hey everyone! " + str(ctx.message.author.display_name) + " finished Halo Completionist! Congrats!")
     await ctx.message.author.add_roles(role)
