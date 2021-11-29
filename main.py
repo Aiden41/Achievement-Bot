@@ -184,8 +184,8 @@ async def legacy(ctx):
   url = "https://xbl.io/api/v2/achievements/player/"
   url+=xuid
   r=requests.get(url, headers={"X-Authorization":auth})
-  x=r.json()
   await ctx.message.add_reaction('2️⃣')
+  x=r.json()
   if len(x['titles']) == 0:
     await ctx.message.add_reaction('3️⃣')
     await ctx.message.add_reaction('❌')
@@ -197,7 +197,9 @@ async def legacy(ctx):
   hr = 0
   h4 = 0
   hw = 0
+  games = set(['Halo: Combat Evolved Anniversary', 'Halo Wars', 'Halo 3', 'Halo: Reach', 'Halo 4', 'Halo 3: ODST Campaign Edition'])
   for game in x['titles']:
+    if game['name'] in games:
      if game['name'] == 'Halo: Combat Evolved Anniversary':
              if game['achievement']['progressPercentage'] == 100:
                      ce = 100
