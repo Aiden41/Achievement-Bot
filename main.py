@@ -339,7 +339,7 @@ async def xbox(ctx):
   if infinite == 100:
     infiniterole = discord.utils.get(ctx.guild.roles, id=914441618591989801)
     await ctx.message.author.add_roles(infiniterole)
-  if sa == 100 and h5 == 100 and hw == 100 and hw2 == 100 and mcc == 100: #if all 100, give role
+  if sa == 100 and h5 == 100 and hw == 100 and hw2 == 100 and mcc == 100 and infinite == 100: #if all 100, give role
     await ctx.message.add_reaction('3️⃣')
     await ctx.message.add_reaction('✅')
     mccrole = discord.utils.get(ctx.guild.roles, id=913709746098429964)
@@ -435,7 +435,7 @@ async def pc(ctx):
   if infinite == 100:
     infiniterole = discord.utils.get(ctx.guild.roles, id=914441618591989801)
     await ctx.message.author.add_roles(infiniterole)
-  if sa == 100 and ss == 100 and hw == 100 and hw2 == 100 and mcc == 100 and h5 == 100: #if all 100, give role
+  if sa == 100 and ss == 100 and hw == 100 and hw2 == 100 and mcc == 100 and infinite == 100: #if all 100, give role
     await ctx.message.add_reaction('3️⃣')
     await ctx.message.add_reaction('✅')
     mccrole = discord.utils.get(ctx.guild.roles, id=913709746098429964)
@@ -534,7 +534,7 @@ async def hc(ctx):
   if infinite == 100:
     infiniterole = discord.utils.get(ctx.guild.roles, id=914441618591989801)
     await ctx.message.author.add_roles(infiniterole)
-  if sa == 100 and ss == 100 and hw == 100 and hw2 == 100 and mcc == 100 and h5 == 100: #if all 100, give role
+  if sa == 100 and ss == 100 and hw == 100 and hw2 == 100 and mcc == 100 and h5 == 100 and infinite == 100: #if all 100, give role
     await ctx.message.add_reaction('3️⃣')
     await ctx.message.add_reaction('✅')
     mccrole = discord.utils.get(ctx.guild.roles, id=913709746098429964)
