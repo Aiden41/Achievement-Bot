@@ -1,8 +1,10 @@
 import os
 import discord
 from discord.ext import commands
+from discord import Member
 import json
 import requests
+import random
 from dotenv import load_dotenv
 
 load_dotenv() #get env variables
@@ -12,6 +14,7 @@ intents.members = True
 
 token = os.environ['TOKEN']
 auth = os.environ['AUTH']
+tenor = os.environ['TENOR']
 
 activity = discord.Activity(type=discord.ActivityType.listening, name="+help") #create activity instance
 
@@ -20,22 +23,46 @@ bot.remove_command('help') #delete default help
 
 @bot.command(pass_context=True) #help command, send info about the commands
 async def help(ctx):
+  print("help command used - " + str(ctx.message.author))
   embed=discord.Embed(color=0x5662f6)
   embed.add_field(name="Commands Help", value="+gamertag (or +gt) \"gamertag\" - sets your gamertag\n+count - shows number of users with corresponding completion role\n+mcc - checks your MCC progress\n+infinite - checks your Halo Infinite progress\n+legacy - checks your Legacy Master progress\n+pc - checks your PC Master Progress\n+xbox - checks your Modern Xbox Master progress\n+hc - checks your Halo Completionist progress", inline=True)
   await ctx.send(embed=embed)
 
-@bot.command(pass_context=True)
+@bot.command(pass_context=True) #staff help command, send info about the commands
+@commands.has_permissions(ban_members=True)
+async def staffhelp(ctx):
+  print("staff help command used - " + str(ctx.message.author))
+  embed=discord.Embed(color=0x5662f6)
+  embed.add_field(name="Staff Commands Help", value="+warn \"user id\" reason - warns the user\n+warns \"user id\" - shows warnings for that user\n+rmwarn \"user id\" \"warning number\" - deletes specified warning for that user\n+kick \"user id\" \"reason\" - kicks specified user\n+ban \"user id\" \"reason\" - bans specfied user\n+unban \"user id\" - unbans specified user", inline=True)
+  await ctx.send(embed=embed)
+
+@bot.command(pass_context=True) #issue command, uses tenor api to find a random skill issue gif
+async def issue(ctx):
+    print("skill issue command used - " + str(ctx.message.author)) 
+    search_term = "skill issue"
+    lmt = 50
+    pos = random.randint(0,140)
+    r = requests.get("https://g.tenor.com/v1/search?q=%s&key=%s&limit=%s&pos=%s" % (search_term, tenor, lmt, pos))
+    if r.status_code == 200:
+      gifs = json.loads(r.content)
+      random.seed()
+      random_index = random.randint(0,len(gifs['results'])-1)
+      await ctx.send(gifs['results'][random_index]['url'])
+
+@bot.command(pass_context=True) #count command, sends number of users with each completion role
 async def count(ctx): 
-    mcc = ctx.guild.get_role(764645825392803870)
+    print("count command used - " + str(ctx.message.author))
+    mcc = ctx.guild.get_role(764645825392803870) #get each role
     infinite = ctx.guild.get_role(914979273608138783)
     pc = ctx.guild.get_role(818247288610357268)
     xbox = ctx.guild.get_role(818247307069882409)
     legacy = ctx.guild.get_role(818246915304194058)
     hc = ctx.guild.get_role(818278553187385424)
-    await ctx.send("Number of users with each role:\nMCC 100%:   **" + str(len(mcc.members)) + "**\nInfinite 100%:   **" + str(len(infinite.members)) + "**\nPC Master:   **" + str(len(pc.members)) + "**\nModern Xbox Master:   **" + str(len(xbox.members)) + "**\nLegacy Master:   **" + str(len(legacy.members)) + "**\nHalo Completionist:   **" + str(len(hc.members)) + "**")
+    await ctx.send("Number of users with each role:\nMCC 100%:   **" + str(len(mcc.members)) + "**\nInfinite 100%:   **" + str(len(infinite.members)) + "**\nPC Master:   **" + str(len(pc.members)) + "**\nModern Xbox Master:   **" + str(len(xbox.members)) + "**\nLegacy Master:   **" + str(len(legacy.members)) + "**\nHalo Completionist:   **" + str(len(hc.members)) + "**") #send counts
 
 @bot.command(pass_context=True) #mcc command
 async def mcc(ctx):
+  print("mcc command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Halo Completionist.')
@@ -91,6 +118,7 @@ async def mcc(ctx):
 
 @bot.command(pass_context=True) #same as mcc but for halo infinite
 async def infinite(ctx):
+  print("infinite command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Halo Completionist.')
@@ -144,8 +172,157 @@ async def infinite(ctx):
   await ctx.reply("You haven't played Halo Infinite before.")
   return
 
+@bot.command(pass_context=True) #ban command, bans a user for given reason
+@commands.has_permissions(ban_members=True)
+async def ban(ctx, id: int, reason, *args):
+ print("ban command used - " + str(ctx.message.author))
+ user = await bot.fetch_user(id)
+ if len(args) != 0:
+  reason += ' '
+  reason += ' '.join(args)
+ if user.dm_channel == None:
+      await user.create_dm()
+ await user.dm_channel.send(content=f"You have been banned from {ctx.guild}.\nReason: {reason}\nYou can appeal here: <https://forms.gle/QP62ibaP8GvZMzbM8>")
+ await user.ban(reason=reason)  
+
+@ban.error #checks for issues with ban command
+async def ban_error(ctx, error):
+  if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.reply('Incorrect arguments entered | **+ban user reason**')
+
+@bot.command(pass_context=True) #unban command, unbans specified user
+@commands.has_permissions(ban_members=True)
+async def unban(ctx, id: int):
+ print("unban command used - " + str(ctx.message.author))
+ user = await bot.fetch_user(id)
+ if user.dm_channel == None:
+      await user.create_dm()
+ await user.dm_channel.send(content=f"You have been unbanned from {ctx.guild}.\nJoin back if you'd like: https://discord.gg/UHwtz8rQse")
+ await ctx.guild.unban(user)
+
+@unban.error #checks for issues with unban command
+async def unban_error(ctx, error):
+  if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.reply('Incorrect arguments entered | **+unban user**')
+
+@bot.command(pass_context=True) #kick command
+@commands.has_permissions(ban_members=True)
+async def kick(ctx, id: int, reason, *args):
+ print("kick command used - " + str(ctx.message.author))
+ user = await bot.fetch_user(id)
+ if len(args) != 0:
+  reason += ' '
+  reason += ' '.join(args)
+ if user.dm_channel == None:
+      await user.create_dm()
+ await user.dm_channel.send(content=f"You have been kicked from {ctx.guild}.\nReason: {reason} ")
+ await user.kick(reason=reason) 
+
+@kick.error
+async def kick_error(ctx, error):
+  if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.reply('Incorrect arguments entered | **+kick user reason**')
+
+@bot.command(pass_context=True) #warn command, puts warning in database
+@commands.has_permissions(ban_members=True)
+async def warn(ctx, id: int, reason, *args):
+ print("warn command used - " + str(ctx.message.author))
+ user = await bot.fetch_user(id)
+ if len(args) != 0:
+  reason += ' '
+  reason += ' '.join(args)
+ if user.dm_channel == None:
+      await user.create_dm()
+ await user.dm_channel.send(content=f"You have been warned in {ctx.guild}.\nReason: {reason} ")
+ member = str(user.id)
+ db={} #make empty database 
+ try: #try loading something from the database
+    f=open("warnings.json")
+    db=json.load(f) #set dict to db
+    f.close()
+ except:
+    pass #keep db as empty dict
+ db.setdefault(member, []).append(reason)
+ f=open("warnings.json", "w") #write to warnings.json
+ json.dump(db, f)
+ f.close()
+ await ctx.reply("This user has been warned.")
+ await user.warn(reason=reason) 
+
+@warn.error
+async def warn_error(ctx, error):
+  if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.reply('Incorrect arguments entered | **+warn user reason**')
+
+@bot.command(pass_context=True) #warns command, gets warnings for specified user
+@commands.has_permissions(ban_members=True)
+async def warns(ctx, id: int):
+ print("warns command used - " + str(ctx.message.author))
+ user = await bot.fetch_user(id)
+ member = str(user.id)
+ db={} #make empty database 
+ try: #try loading something from the database
+    f=open("warnings.json")
+    db=json.load(f) #set dict to db
+    f.close()
+ except:
+    pass #keep db as empty dict
+ if member in db.keys():
+   if len(db[member]) == 0:
+     await ctx.reply("This user has no warnings.")
+   else:
+     i=1
+     response = ''
+     for warning in db[member]:
+       response += str(i) + '. ' + warning + '\n'
+       i += 1
+     await ctx.reply(response)
+ else:
+    await ctx.reply("This user has no warnings.")
+
+@warns.error
+async def warns_error(ctx, error):
+  if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.reply('Incorrect arguments entered | **+warns user**')
+
+@bot.command(pass_context=True) #rmwarn command, removes specified warning
+@commands.has_permissions(ban_members=True)
+async def rmwarn(ctx, id: int, warnnum):
+ print("rmwarn command used - " + str(ctx.message.author))
+ user = await bot.fetch_user(id)
+ member = str(user.id)
+ warnnum = int(warnnum) - 1
+ db={} #make empty database 
+ try: #try loading something from the database
+    f=open("warnings.json")
+    db=json.load(f) #set dict to db
+    f.close()
+ except:
+    pass #keep db as empty dict
+ if member in db.keys():
+   if len(db[member]) == 0:
+     await ctx.reply("This user has no warnings to remove.")
+   else:
+     try:
+      del db[member][warnnum]
+      f=open("warnings.json", "w") #write to database.json
+      json.dump(db, f)
+      f.close()
+     except:
+      await ctx.reply("That warning number does not exist.")
+      return
+     await ctx.reply("The warning has been removed.")
+ else:
+    await ctx.reply("This user has no warnings to remove.")
+
+@rmwarn.error
+async def rmwarn_error(ctx, error):
+  if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.reply('Incorrect arguments entered | **+warns user warning#**')
+
 @bot.command(pass_context=True, aliases=['gamertag']) #gamertag command, sets user's gamertag in database
 async def gt(ctx, *args):
+  print("gt command used - " + str(ctx.message.author))
   if len(args) == 0: #if no gamertag given, tell them
     await ctx.message.add_reaction('❌')
     await ctx.reply("Please write your gamertag after the command.")
@@ -185,6 +362,7 @@ async def gt(ctx, *args):
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
 async def legacy(ctx):
+  print("legacy command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818246915304194058)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Legacy Master.')
@@ -261,6 +439,7 @@ async def legacy(ctx):
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
 async def xbox(ctx):
+  print("xbox command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Halo Completionist.')
@@ -357,6 +536,7 @@ async def xbox(ctx):
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
 async def pc(ctx):
+  print("pc command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Halo Completionist.')
@@ -453,6 +633,7 @@ async def pc(ctx):
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
 async def hc(ctx):
+  print("hc command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
   if role in ctx.message.author.roles:
      await ctx.reply('You\'ve already finished Halo Completionist.')
