@@ -136,7 +136,7 @@ class Music(commands.Cog):
         role = discord.utils.get(ctx.guild.roles, id=859297043507576862)
         if role in ctx.message.author.roles:
             await ctx.message.add_reaction('✅')
-            self.vc.disconnect()
+            await self.vc.disconnect()
     
     @commands.command(name="pause", help="Pausing the music")
     async def pause(self, ctx):
