@@ -30,7 +30,15 @@ tenor = os.environ['TENOR']
 
 bot.remove_command('help') #delete default help
 
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        await ctx.reply("That command doesn't exist! Try +help!")
+    if isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+        await ctx.reply(error + ".")
+
 @bot.command(pass_context=True) #help command, send info about the commands
+@commands.cooldown(1, 10, commands.BucketType.user)
 async def help(ctx):
   print("help command used - " + str(ctx.message.author))
   embed=discord.Embed(color=0x5662f6)
@@ -85,6 +93,7 @@ async def based(ctx):
       await ctx.send(gifs['results'][random_index]['url'])
 
 @bot.command(pass_context=True) #count command, sends number of users with each completion role
+@commands.cooldown(1, 60, commands.BucketType.user)
 async def count(ctx): 
     print("count command used - " + str(ctx.message.author))
     mcc = ctx.guild.get_role(764645825392803870) #get each role
@@ -96,12 +105,14 @@ async def count(ctx):
     await ctx.send("Number of users with each role:\nMCC 100%:   **" + str(len(mcc.members)) + "**\nInfinite 100%:   **" + str(len(infinite.members)) + "**\nPC Master:   **" + str(len(pc.members)) + "**\nModern Xbox Master:   **" + str(len(xbox.members)) + "**\nLegacy Master:   **" + str(len(legacy.members)) + "**\nHalo Completionist:   **" + str(len(hc.members)) + "**") #send counts
 
 @bot.command(pass_context=True)
+@commands.cooldown(1, 30, commands.BucketType.user)
 async def ce(ctx):
   print("ce command used - " + str(ctx.message.author))
   await ctx.message.add_reaction('🤡')
   await ctx.reply("CE sucks, play literally any other Halo.")
 
 @bot.command(pass_context=True) #mcc command
+@commands.cooldown(1, 60, commands.BucketType.user)
 async def mcc(ctx):
   print("mcc command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
@@ -159,6 +170,7 @@ async def mcc(ctx):
   return
 
 @bot.command(pass_context=True) #same as mcc but for halo infinite
+@commands.cooldown(1, 60, commands.BucketType.user)
 async def infinite(ctx):
   print("infinite command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
@@ -366,6 +378,7 @@ async def rmwarn_error(ctx, error):
         await ctx.reply('Incorrect arguments entered | **+warns user warning#**')
 
 @bot.command(pass_context=True, aliases=['gamertag']) #gamertag command, sets user's gamertag in database
+@commands.cooldown(1, 30, commands.BucketType.user)
 async def gt(ctx, *args):
   print("gt command used - " + str(ctx.message.author))
   if len(args) == 0: #if no gamertag given, tell them
@@ -406,6 +419,7 @@ async def gt(ctx, *args):
     return
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
+@commands.cooldown(1, 60, commands.BucketType.user)
 async def legacy(ctx):
   print("legacy command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818246915304194058)
@@ -465,6 +479,7 @@ async def legacy(ctx):
     return
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
+@commands.cooldown(1, 60, commands.BucketType.user)
 async def xbox(ctx):
   print("xbox command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
@@ -563,6 +578,7 @@ async def xbox(ctx):
     return
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
+@commands.cooldown(1, 60, commands.BucketType.user)
 async def pc(ctx):
   print("pc command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
@@ -667,6 +683,7 @@ async def pc(ctx):
       return
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
+@commands.cooldown(1, 60, commands.BucketType.user)
 async def hc(ctx):
   print("hc command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
