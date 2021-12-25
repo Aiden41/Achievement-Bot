@@ -35,7 +35,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
         await ctx.reply("That command doesn't exist! Try +help!")
     if isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-        await ctx.reply(error + ".")
+        await ctx.reply(str(error) + ".")
 
 @bot.command(pass_context=True) #help command, send info about the commands
 @commands.cooldown(1, 10, commands.BucketType.user)
@@ -117,15 +117,15 @@ async def mcc(ctx):
   print("mcc command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
   if role in ctx.message.author.roles:
-     await ctx.reply('You\'ve already finished Halo Completionist.')
+     await ctx.reply('You\'ve already finished Halo Completionist, which requires MCC.')
      return
   role = discord.utils.get(ctx.guild.roles, id=818247307069882409)
   if role in ctx.message.author.roles:
-     await ctx.reply('You\'ve already finished Modern Xbox Master.')
+     await ctx.reply('You\'ve already finished Modern Xbox Master, which requires MCC.')
      return
   role = discord.utils.get(ctx.guild.roles, id=818247288610357268)
   if role in ctx.message.author.roles:
-     await ctx.reply('You\'ve already finished PC Master.')
+     await ctx.reply('You\'ve already finished PC Master, which requires MCC.')
      return
   role = discord.utils.get(ctx.guild.roles, id=764645825392803870) #get mcc role
   role2 = discord.utils.get(ctx.guild.roles, id=764645814677012490)
@@ -175,15 +175,15 @@ async def infinite(ctx):
   print("infinite command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
   if role in ctx.message.author.roles:
-     await ctx.reply('You\'ve already finished Halo Completionist.')
+     await ctx.reply('You\'ve already finished Halo Completionist, which requires Halo Infinite.')
      return
   role = discord.utils.get(ctx.guild.roles, id=818247307069882409)
   if role in ctx.message.author.roles:
-     await ctx.reply('You\'ve already finished Modern Xbox Master.')
+     await ctx.reply('You\'ve already finished Modern Xbox Master, which requires Halo Infinite.')
      return
   role = discord.utils.get(ctx.guild.roles, id=818247288610357268)
   if role in ctx.message.author.roles:
-     await ctx.reply('You\'ve already finished PC Master.')
+     await ctx.reply('You\'ve already finished PC Master, which requires Halo Infinite.')
      return
   role = discord.utils.get(ctx.guild.roles, id=914979273608138783)
   if role in ctx.message.author.roles:
@@ -234,11 +234,15 @@ async def ban(ctx, member: discord.Member, reason, *args):
  if len(args) != 0:
   reason += ' '
   reason += ' '.join(args)
- if user.dm_channel == None:
-      await user.create_dm()
- await user.dm_channel.send(content=f"You have been banned from {ctx.guild}.\nReason: {reason}\nYou can appeal here: <https://forms.gle/QP62ibaP8GvZMzbM8>")
- await ctx.reply("This user has been banned.")
- await member.ban(reason=reason)  
+ try:
+    await member.send(content=f"You have been banned from {ctx.guild}.\nReason: {reason}\nYou can appeal here: <https://forms.gle/QP62ibaP8GvZMzbM8>")
+    await member.ban(reason=reason)
+    await ctx.message.add_reaction('✅')
+    await ctx.reply("This user has been banned.")
+ except Exception:
+    await member.ban(reason=reason)
+    await ctx.message.add_reaction('✅')
+    await ctx.reply("This user has been banned, but we couldn't dm the reason.")  
 
 @ban.error #checks for issues with ban command
 async def ban_error(ctx, error):
@@ -250,11 +254,15 @@ async def ban_error(ctx, error):
 async def unban(ctx, id: int):
  print("unban command used - " + str(ctx.message.author))
  user = await bot.fetch_user(id)
- if user.dm_channel == None:
-      await user.create_dm()
- await user.dm_channel.send(content=f"You have been unbanned from {ctx.guild}.\nJoin back if you'd like: https://discord.gg/UHwtz8rQse")
- await ctx.reply("This user has been unbanned.")
- await ctx.guild.unban(user)
+ try:
+   await user.send(content=f"You have been unbanned from {ctx.guild}.\nJoin back if you'd like: https://discord.gg/UHwtz8rQse")
+   await ctx.message.add_reaction('✅')
+   await ctx.reply("This user has been unbanned.")
+   await ctx.guild.unban(user)
+ except:
+   await ctx.message.add_reaction('✅')
+   await ctx.reply("This user has been unbanned, but we couldn't let them know.")
+   await ctx.guild.unban(user)
 
 @unban.error #checks for issues with unban command
 async def unban_error(ctx, error):
@@ -269,11 +277,15 @@ async def kick(ctx, member: discord.Member, reason, *args):
  if len(args) != 0:
   reason += ' '
   reason += ' '.join(args)
- if user.dm_channel == None:
-      await user.create_dm()
- await user.dm_channel.send(content=f"You have been kicked from {ctx.guild}.\nReason: {reason} ")
- await ctx.reply("This user has been kicked.")
- await member.kick(reason=reason) 
+ try:
+    await member.send(content=f"You have been kicked from {ctx.guild}.\nReason: {reason}")
+    await member.kick(reason=reason)
+    await ctx.message.add_reaction('✅')
+    await ctx.reply("This user has been kicked.")
+ except:
+    await member.kick(reason=reason)
+    await ctx.message.add_reaction('✅')
+    await ctx.reply("This user has been kicked, but we couldn't dm the reason.")  
 
 @kick.error
 async def kick_error(ctx, error):
@@ -288,9 +300,6 @@ async def warn(ctx, member: discord.Member, reason, *args):
  if len(args) != 0:
   reason += ' '
   reason += ' '.join(args)
- if user.dm_channel == None:
-      await user.create_dm()
- await user.dm_channel.send(content=f"You have been warned in {ctx.guild}.\nReason: {reason} ")
  idstring = str(user.id)
  db={} #make empty database 
  try: #try loading something from the database
@@ -303,8 +312,13 @@ async def warn(ctx, member: discord.Member, reason, *args):
  f=open("warnings.json", "w") #write to warnings.json
  json.dump(db, f)
  f.close()
- await ctx.reply("This user has been warned.")
- await user.warn(reason=reason) 
+ try:
+   await user.send(content=f"You have been warned in {ctx.guild}.\nReason: {reason} ")
+   await ctx.message.add_reaction('✅')
+   await ctx.reply("This user has been warned.")
+ except:
+   await ctx.message.add_reaction('✅')
+   await ctx.reply("This user has their direct messages off, but the warning has been added to their history.")
 
 @warn.error
 async def warn_error(ctx, error):
@@ -543,11 +557,13 @@ async def xbox(ctx):
                if game['achievement']['progressPercentage'] >= h5:
                      h5 = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
      if game['name'] == 'Halo: Spartan Assault':
-             if game['achievement']['progressPercentage'] == 100:
+             if game['achievement']['progressPercentage'] == 100 and game['achievement']['totalGamerscore'] != 0:
                      sa = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-             else:
+             elif game['achievement']['totalGamerscore'] != 0:
                if game['achievement']['progressPercentage'] >= sa:
                      sa = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+             else:
+               sa = -1
      if game['name'] == 'Halo Infinite':
              if game['achievement']['currentGamerscore'] == 1600:
                      infinite = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
@@ -572,10 +588,16 @@ async def xbox(ctx):
     await ctx.message.author.add_roles(role)
     return
   else:
+    if sa == -1:
+      sa = "Your SA achievements are bugged. Please post an in-game screenshot and ping staff."
     await ctx.message.add_reaction('3️⃣') #not all 100, give stats
     await ctx.message.add_reaction('❌')
-    await ctx.reply("Here\'s your progress on the Modern Xbox games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo 5: Guardians :   **" + '{:.4g}'.format(h5) +"%**\nHalo: Spartan Assault :   **" + '{:.4g}'.format(sa) + "%**\n\nNote: If you finished everything and played any game on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
-    return
+    if type(sa) is not str:
+      await ctx.reply("Here\'s your progress on the Modern Xbox games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo 5: Guardians :   **" + '{:.4g}'.format(h5) +"%**\nHalo: Spartan Assault :   **" + '{:.4g}'.format(sa) + "%**\n\nNote: If you finished everything and played any game on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
+      return
+    else:
+      await ctx.reply("Here\'s your progress on the Modern Xbox games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo 5: Guardians :   **" + '{:.4g}'.format(h5) +"%**\nHalo: Spartan Assault :   **" + sa + "%**\n\nNote: If you finished everything and played any game on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
+      return
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
 @commands.cooldown(1, 60, commands.BucketType.user)
@@ -642,13 +664,15 @@ async def pc(ctx):
                if game['achievement']['progressPercentage'] >= ss:
                      ss = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
              else:
-               ss = "Your SS achievements are bugged. Please post an in-game screenshot and ping staff."
+               ss = -1
      if game['name'] == 'Halo: Spartan Assault':
-             if game['achievement']['progressPercentage'] == 100:
+             if game['achievement']['progressPercentage'] == 100 and game['achievement']['totalGamerscore'] != 0:
                      sa = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-             else:
+             elif game['achievement']['totalGamerscore'] != 0:
                if game['achievement']['progressPercentage'] >= sa:
                      sa = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+             else:
+               sa = -1
      if game['name'] == 'Halo Infinite':
              if game['achievement']['progressPercentage'] == 100:
                      infinite = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
@@ -673,10 +697,17 @@ async def pc(ctx):
     await ctx.message.author.add_roles(role)
     return
   else:
+    if sa == -1:
+      sa = "Your SA achievements are bugged. Please post an in-game screenshot and ping staff."
+    if ss == -1:
+      ss = "Your SS achievements are bugged. Please post an in-game screenshot and ping staff."
     await ctx.message.add_reaction('3️⃣') #not all 100, give stats
     await ctx.message.add_reaction('❌')
-    if type(ss) is not str:
+    if type(ss) is not str and type(sa) is not str:
       await ctx.reply("Here\'s your progress on the PC games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo: Spartan Assault :   **" + '{:.4g}'.format(sa) +"%**\nHalo: Spartan Strike :   **" + '{:.4g}'.format(ss) + "%**\n\nNote: If you finished everything and played any game on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
+      return
+    if type(sa) is str and type(ss) is not str:
+      await ctx.reply("Here\'s your progress on the PC games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo: Spartan Assault :   **" + sa +"%**\nHalo: Spartan Strike :   **" + '{:.4g}'.format(ss) + "%**\n\nNote: If you finished everything and played any game on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
       return
     else:
       await ctx.reply("Here\'s your progress on the PC games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo: Spartan Assault :   **" + '{:.4g}'.format(sa) +"%**\nHalo: Spartan Strike :   **" + ss + "**\n\nNote: If you finished everything and played any game on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
@@ -688,8 +719,8 @@ async def hc(ctx):
   print("hc command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
   if role in ctx.message.author.roles:
-     await ctx.reply('You\'ve already finished Halo Completionist.')
-     return
+    await ctx.reply('You\'ve already finished Halo Completionist.')
+    return
   role2 = discord.utils.get(ctx.guild.roles, id=818247288610357268)
   role3 = discord.utils.get(ctx.guild.roles, id=818247307069882409)
   if role2 in ctx.message.author.roles and role3 in ctx.message.author.roles:
@@ -733,50 +764,52 @@ async def hc(ctx):
   games = set(['Halo: The Master Chief Collection', 'Halo Wars: Definitive Edition (PC)', 'Halo Wars 2', 'Halo: Spartan Strike', 'Halo: Spartan Assault', 'Halo Infinite', 'Halo 5: Guardians']) #create set of names of games
   for game in x['titles']: #for each game in the data
     if game['name'] in games: #if the game is in the set
-     if game['name'] == 'Halo: The Master Chief Collection': #check for what game and set progress accordingly
-             if game['achievement']['progressPercentage'] == 100:
-                     mcc = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-             else:
-               if game['achievement']['progressPercentage'] >= mcc:
-                     mcc = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-     if game['name'] == 'Halo Wars: Definitive Edition (PC)':
-             if game['achievement']['progressPercentage'] == 100:
-                     hw = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-             else:
-               if game['achievement']['progressPercentage'] >= hw:
-                     hw = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-     if game['name'] == 'Halo Wars 2':
-             if game['achievement']['progressPercentage'] == 100:
-                     hw2 = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-             else:
-               if game['achievement']['progressPercentage'] >= hw2:
-                     hw2 = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-     if game['name'] == 'Halo: Spartan Strike':
-             if game['achievement']['progressPercentage'] == 100 and game['achievement']['totalGamerscore'] != 0:
-                     ss = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-             elif game['achievement']['totalGamerscore'] != 0:
-               if game['achievement']['progressPercentage'] >= ss:
-                     ss = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-             else:
-               ss = "Your SS achievements are bugged. Please post an in-game screenshot and ping staff."
-     if game['name'] == 'Halo: Spartan Assault':
-             if game['achievement']['progressPercentage'] == 100:
-                     sa = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-             else:
-               if game['achievement']['progressPercentage'] >= sa:
-                     sa = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-     if game['name'] == 'Halo Infinite':
-             if game['achievement']['progressPercentage'] == 100:
-                     infinite = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-             else:
-               if game['achievement']['progressPercentage'] >= infinite:
-                     infinite = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-     if game['name'] == 'Halo 5: Guardians':
-             if game['achievement']['progressPercentage'] == 100:
-                     h5 = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
-             else:
-               if game['achievement']['progressPercentage'] >= h5:
-                     h5 = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+      if game['name'] == 'Halo: The Master Chief Collection': #check for what game and set progress accordingly
+              if game['achievement']['progressPercentage'] == 100:
+                      mcc = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+              else:
+                if game['achievement']['progressPercentage'] >= mcc:
+                      mcc = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+      if game['name'] == 'Halo Wars: Definitive Edition (PC)':
+              if game['achievement']['progressPercentage'] == 100:
+                      hw = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+              else:
+                if game['achievement']['progressPercentage'] >= hw:
+                      hw = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+      if game['name'] == 'Halo Wars 2':
+              if game['achievement']['progressPercentage'] == 100:
+                      hw2 = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+              else:
+                if game['achievement']['progressPercentage'] >= hw2:
+                      hw2 = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+      if game['name'] == 'Halo: Spartan Strike':
+              if game['achievement']['progressPercentage'] == 100 and game['achievement']['totalGamerscore'] != 0:
+                      ss = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+              elif game['achievement']['totalGamerscore'] != 0:
+                if game['achievement']['progressPercentage'] >= ss:
+                      ss = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+              else:
+                ss = -1
+      if game['name'] == 'Halo: Spartan Assault':
+              if game['achievement']['progressPercentage'] == 100 and game['achievement']['totalGamerscore'] != 0:
+                      sa = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+              elif game['achievement']['totalGamerscore'] != 0:
+                if game['achievement']['progressPercentage'] >= sa:
+                      sa = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+              else:
+                sa = -1
+      if game['name'] == 'Halo Infinite':
+              if game['achievement']['progressPercentage'] == 100:
+                      infinite = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+              else:
+                if game['achievement']['progressPercentage'] >= infinite:
+                      infinite = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+      if game['name'] == 'Halo 5: Guardians':
+              if game['achievement']['progressPercentage'] == 100:
+                      h5 = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
+              else:
+                if game['achievement']['progressPercentage'] >= h5:
+                      h5 = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
   role2 = discord.utils.get(ctx.guild.roles, id=764645814677012490)
   if mcc == 100 and role2 not in ctx.message.author.roles:
     mccrole = discord.utils.get(ctx.guild.roles, id=764645825392803870)
@@ -801,8 +834,15 @@ async def hc(ctx):
   else:
     await ctx.message.add_reaction('3️⃣') #not all 100, give stats
     await ctx.message.add_reaction('❌')
-    if type(ss) is not str:
+    if sa == -1:
+      sa = "Your SA achievements are bugged. Please post an in-game screenshot and ping staff."
+    if ss == -1:
+      ss = "Your SS achievements are bugged. Please post an in-game screenshot and ping staff."
+    if type(ss) is not str and type(sa) is not str:
       await ctx.reply("Here\'s your progress on the Halo games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo 5: Guardians :   **" + '{:.4g}'.format(h5) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo: Spartan Assault :   **" + '{:.4g}'.format(sa) +"%**\nHalo: Spartan Strike :   **" + '{:.4g}'.format(ss) + "%**\n\nNote: If you finished everything and did Halo Wars: Definitive Edition and/or Halo: Spartan Assault/Strike on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
+      return
+    if type(sa) is str and type(ss) is not str:
+      await ctx.reply("Here\'s your progress on the Halo games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo 5: Guardians :   **" + '{:.4g}'.format(h5) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo: Spartan Assault :   **" + sa +"%**\nHalo: Spartan Strike :   **" + '{:.4g}'.format(ss) + "**\n\nNote: If you finished everything and did Halo Wars: Definitive Edition and/or Halo: Spartan Assault/Strike on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
       return
     else:
       await ctx.reply("Here\'s your progress on the Halo games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo 5: Guardians :   **" + '{:.4g}'.format(h5) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo: Spartan Assault :   **" + '{:.4g}'.format(sa) +"%**\nHalo: Spartan Strike :   **" + ss + "**\n\nNote: If you finished everything and did Halo Wars: Definitive Edition and/or Halo: Spartan Assault/Strike on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
