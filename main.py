@@ -17,7 +17,7 @@ activity = discord.Activity(type=discord.ActivityType.listening, name="+help") #
 intents = discord.Intents.default()
 intents.members = True
 
-bot = commands.Bot(command_prefix="+", activity=activity, intents=intents) #set prefix to '+' and set the activity 
+bot = commands.Bot(command_prefix="+", activity=activity, intents=intents, case_insensitive=True) #set prefix to '+' and set the activity 
 
 for i in range(len(cogs)):
   cogs[i].setup(bot)
