@@ -160,6 +160,9 @@ async def mcc(ctx):
                      await ctx.message.author.add_roles(role)
                      return
              else: #not done
+                     if ctx.channel.id == 923801105874452580:
+                      await ctx.message.delete
+                      return
                      await ctx.message.add_reaction('3️⃣')
                      await ctx.message.add_reaction('❌') #give progress of game
                      await ctx.reply("Sorry, you haven\'t finished MCC yet. You\'re currently **" + '{:.4g}'.format((game['achievement']['currentGamerscore'])/(game['achievement']['totalGamerscore'])*100) + "%** finished.")
@@ -217,6 +220,9 @@ async def infinite(ctx):
                      await ctx.message.author.add_roles(role)
                      return
              else:
+                     if ctx.channel.id == 923801105874452580:
+                      await ctx.message.delete
+                      return
                      await ctx.message.add_reaction('3️⃣')
                      await ctx.message.add_reaction('❌')
                      await ctx.reply("Sorry, you haven\'t finished Halo Infinite yet. You\'re currently **" + '{:.4g}'.format((game['achievement']['currentGamerscore'])/(game['achievement']['totalGamerscore'])*100) + "%** finished.")
