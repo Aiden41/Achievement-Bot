@@ -105,14 +105,14 @@ async def count(ctx):
     await ctx.send("Number of users with each role:\nMCC 100%:   **" + str(len(mcc.members)) + "**\nInfinite 100%:   **" + str(len(infinite.members)) + "**\nPC Master:   **" + str(len(pc.members)) + "**\nModern Xbox Master:   **" + str(len(xbox.members)) + "**\nLegacy Master:   **" + str(len(legacy.members)) + "**\nHalo Completionist:   **" + str(len(hc.members)) + "**") #send counts
 
 @bot.command(pass_context=True)
-@commands.cooldown(1, 30, commands.BucketType.user)
+@commands.cooldown(1, 10, commands.BucketType.user)
 async def ce(ctx):
   print("ce command used - " + str(ctx.message.author))
   await ctx.message.add_reaction('🤡')
   await ctx.reply("CE sucks, play literally any other Halo.")
 
 @bot.command(pass_context=True) #mcc command
-@commands.cooldown(1, 60, commands.BucketType.user)
+@commands.cooldown(1, 20, commands.BucketType.user)
 async def mcc(ctx):
   print("mcc command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
@@ -161,7 +161,7 @@ async def mcc(ctx):
                      return
              else: #not done
                      if ctx.channel.id == 923801105874452580:
-                      await ctx.message.delete
+                      await ctx.message.delete()
                       return
                      await ctx.message.add_reaction('3️⃣')
                      await ctx.message.add_reaction('❌') #give progress of game
@@ -173,7 +173,7 @@ async def mcc(ctx):
   return
 
 @bot.command(pass_context=True) #same as mcc but for halo infinite
-@commands.cooldown(1, 60, commands.BucketType.user)
+@commands.cooldown(1, 20, commands.BucketType.user)
 async def infinite(ctx):
   print("infinite command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
@@ -221,7 +221,7 @@ async def infinite(ctx):
                      return
              else:
                      if ctx.channel.id == 923801105874452580:
-                      await ctx.message.delete
+                      await ctx.message.delete()
                       return
                      await ctx.message.add_reaction('3️⃣')
                      await ctx.message.add_reaction('❌')
@@ -398,7 +398,7 @@ async def rmwarn_error(ctx, error):
         await ctx.reply('Incorrect arguments entered | **+warns user warning#**')
 
 @bot.command(pass_context=True, aliases=['gamertag']) #gamertag command, sets user's gamertag in database
-@commands.cooldown(1, 30, commands.BucketType.user)
+@commands.cooldown(1, 10, commands.BucketType.user)
 async def gt(ctx, *args):
   print("gt command used - " + str(ctx.message.author))
   if len(args) == 0: #if no gamertag given, tell them
@@ -439,7 +439,7 @@ async def gt(ctx, *args):
     return
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
-@commands.cooldown(1, 60, commands.BucketType.user)
+@commands.cooldown(1, 20, commands.BucketType.user)
 async def legacy(ctx):
   print("legacy command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818246915304194058)
@@ -499,7 +499,7 @@ async def legacy(ctx):
     return
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
-@commands.cooldown(1, 60, commands.BucketType.user)
+@commands.cooldown(1, 20, commands.BucketType.user)
 async def xbox(ctx):
   print("xbox command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
@@ -606,7 +606,7 @@ async def xbox(ctx):
       return
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
-@commands.cooldown(1, 60, commands.BucketType.user)
+@commands.cooldown(1, 20, commands.BucketType.user)
 async def pc(ctx):
   print("pc command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
@@ -720,7 +720,7 @@ async def pc(ctx):
       return
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
-@commands.cooldown(1, 60, commands.BucketType.user)
+@commands.cooldown(1, 20, commands.BucketType.user)
 async def hc(ctx):
   print("hc command used - " + str(ctx.message.author))
   role = discord.utils.get(ctx.guild.roles, id=818278553187385424)
