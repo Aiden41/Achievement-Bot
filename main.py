@@ -529,7 +529,7 @@ async def xbox(ctx):
     await ctx.message.add_reaction('❌')
     await ctx.reply("You have either not played any games or your Xbox profile is private.")
     return
-  sa = 0 #progress variables, set default as 0
+  sa = -2 #progress variables, set default as 0
   mcc = 0
   h5 = 0
   hw = 0
@@ -569,7 +569,10 @@ async def xbox(ctx):
                if game['achievement']['progressPercentage'] >= sa:
                      sa = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
              else:
-               sa = -1
+               if sa >= -1:
+                 pass
+               else:
+                 sa = -1
      if game['name'] == 'Halo Infinite':
              if game['achievement']['currentGamerscore'] == 1600:
                      infinite = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
@@ -594,6 +597,8 @@ async def xbox(ctx):
     await ctx.message.author.add_roles(role)
     return
   else:
+    if sa == -2:
+      sa = 0
     if sa == -1:
       sa = "Your SA achievements are bugged. Please post an in-game screenshot and ping staff."
     await ctx.message.add_reaction('3️⃣') #not all 100, give stats
@@ -602,7 +607,7 @@ async def xbox(ctx):
       await ctx.reply("Here\'s your progress on the Modern Xbox games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo 5: Guardians :   **" + '{:.4g}'.format(h5) +"%**\nHalo: Spartan Assault :   **" + '{:.4g}'.format(sa) + "%**\n\nNote: If you finished everything and played any game on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
       return
     else:
-      await ctx.reply("Here\'s your progress on the Modern Xbox games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo 5: Guardians :   **" + '{:.4g}'.format(h5) +"%**\nHalo: Spartan Assault :   **" + sa + "%**\n\nNote: If you finished everything and played any game on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
+      await ctx.reply("Here\'s your progress on the Modern Xbox games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo 5: Guardians :   **" + '{:.4g}'.format(h5) +"%**\nHalo: Spartan Assault :   **" + sa + "**\n\nNote: If you finished everything and played any game on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
       return
 
 @bot.command(pass_context=True) #legacy command, same as mcc but has to check multiple games
@@ -636,9 +641,9 @@ async def pc(ctx):
     await ctx.message.add_reaction('❌')
     await ctx.reply("You have either not played any games or your Xbox profile is private.")
     return
-  sa = 0 #progress variables, set default as 0
+  sa = -2 #progress variables, set default as 0
   mcc = 0
-  ss = 0
+  ss = -2
   hw = 0
   hw2 = 0
   infinite = 0
@@ -670,7 +675,10 @@ async def pc(ctx):
                if game['achievement']['progressPercentage'] >= ss:
                      ss = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
              else:
-               ss = -1
+               if ss >= -1:
+                 pass
+               else:
+                 ss = -1
      if game['name'] == 'Halo: Spartan Assault':
              if game['achievement']['progressPercentage'] == 100 and game['achievement']['totalGamerscore'] != 0:
                      sa = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
@@ -678,7 +686,10 @@ async def pc(ctx):
                if game['achievement']['progressPercentage'] >= sa:
                      sa = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
              else:
-               sa = -1
+               if sa >= -1:
+                 pass
+               else:
+                 sa = -1
      if game['name'] == 'Halo Infinite':
              if game['achievement']['progressPercentage'] == 100:
                      infinite = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
@@ -703,6 +714,10 @@ async def pc(ctx):
     await ctx.message.author.add_roles(role)
     return
   else:
+    if sa == -2:
+      sa = 0
+    if ss == -2:
+      ss = 0
     if sa == -1:
       sa = "Your SA achievements are bugged. Please post an in-game screenshot and ping staff."
     if ss == -1:
@@ -713,7 +728,7 @@ async def pc(ctx):
       await ctx.reply("Here\'s your progress on the PC games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo: Spartan Assault :   **" + '{:.4g}'.format(sa) +"%**\nHalo: Spartan Strike :   **" + '{:.4g}'.format(ss) + "%**\n\nNote: If you finished everything and played any game on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
       return
     if type(sa) is str and type(ss) is not str:
-      await ctx.reply("Here\'s your progress on the PC games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo: Spartan Assault :   **" + sa +"%**\nHalo: Spartan Strike :   **" + '{:.4g}'.format(ss) + "%**\n\nNote: If you finished everything and played any game on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
+      await ctx.reply("Here\'s your progress on the PC games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo: Spartan Assault :   **" + sa +"**\nHalo: Spartan Strike :   **" + '{:.4g}'.format(ss) + "%**\n\nNote: If you finished everything and played any game on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
       return
     else:
       await ctx.reply("Here\'s your progress on the PC games:\n\nHalo Infinite :   **" + '{:.4g}'.format(infinite) + "%**\nMCC :   **" + '{:.4g}'.format(mcc) + "%**\nHalo Wars: Definitive Edition :   **" + '{:.4g}'.format(hw) + "%**\nHalo Wars 2 :   **" + '{:.4g}'.format(hw2) + "%**\nHalo: Spartan Assault :   **" + '{:.4g}'.format(sa) +"%**\nHalo: Spartan Strike :   **" + ss + "**\n\nNote: If you finished everything and played any game on a non-XBL platform, please post your in-game screenshots now and ping a staff member.")
@@ -760,9 +775,9 @@ async def hc(ctx):
     await ctx.message.add_reaction('❌')
     await ctx.reply("You have either not played any games or your Xbox profile is private.")
     return
-  sa = 0 #progress variables, set default as 0
+  sa = -2 #progress variables, set default as 0
   mcc = 0
-  ss = 0
+  ss = -2
   hw = 0
   hw2 = 0
   infinite = 0
@@ -795,7 +810,10 @@ async def hc(ctx):
                 if game['achievement']['progressPercentage'] >= ss:
                       ss = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
               else:
-                ss = -1
+                if ss >= -1:
+                 pass
+                else:
+                 ss = -1
       if game['name'] == 'Halo: Spartan Assault':
               if game['achievement']['progressPercentage'] == 100 and game['achievement']['totalGamerscore'] != 0:
                       sa = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
@@ -803,7 +821,10 @@ async def hc(ctx):
                 if game['achievement']['progressPercentage'] >= sa:
                       sa = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
               else:
-                sa = -1
+                if sa >= -1:
+                 pass
+                else:
+                 sa = -1
       if game['name'] == 'Halo Infinite':
               if game['achievement']['progressPercentage'] == 100:
                       infinite = (game['achievement']['currentGamerscore']/game['achievement']['totalGamerscore'])*100
@@ -840,6 +861,10 @@ async def hc(ctx):
   else:
     await ctx.message.add_reaction('3️⃣') #not all 100, give stats
     await ctx.message.add_reaction('❌')
+    if sa == -2:
+      sa = 0
+    if ss == -2:
+      ss = 0
     if sa == -1:
       sa = "Your SA achievements are bugged. Please post an in-game screenshot and ping staff."
     if ss == -1:
